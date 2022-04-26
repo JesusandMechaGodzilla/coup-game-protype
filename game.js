@@ -1,9 +1,16 @@
+
  class Game {
     constructor(players, actions,reactions,cards) {
         this.players = players
         this.actions = actions
         this.reactions = reactions
         this.deck = this.buildDeck(cards)
+        this.state = Game.GameState.choice
+    }
+    static GameState = {
+        start : Symbol('start'),
+        choice : Symbol('choice'),
+        execution : Symbol('execution')
     }
     shuffle(deck) {
         return deck.sort(() => Math.random() - 0.5)
@@ -27,7 +34,16 @@
     }
 
     startTurn() {
-        
+        return null
+    }
+    executeAction(player,target,action,...args) {
+        if(target){
+            console.log(this)
+            return this.actions[action](player,target,this,...args)
+        }
+        else {
+            return this.actions[action](player,this,...args)
+        }
     }
 
 }
