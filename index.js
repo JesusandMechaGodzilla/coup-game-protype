@@ -1,6 +1,10 @@
 const express = require('express')
 const Game = require('./game.js')
+const socketio = require('socket.io')
+const http = require('http')
 const app = express()
+const server = http.createServer(app)
+const io = socketio(server)
 const cards = [
     {name:"contessa",action:null,reaction:"block_assasin"},
     {name:"duke",action:"tax",reaction:"block_foreign_aid"},
@@ -32,7 +36,6 @@ const actions = {
         game.players[target].coins -=2
     },
     exchange: (player,game,...args) => {
-        console.log(args[0].choice)
         let cardsToReplace = args[0].choice ? args[0].choice : null 
         let cardsToPutBackInDeck = args[0].replace ? args[0].replace : null 
         if(game.state === Game.GameState.choice){
@@ -47,8 +50,18 @@ const actions = {
         }
     }
 }
+
 let game = null
 app.use(express.json())
+ io.on('connection', socket =>{
+    console.log("connected")
+    socket.on("start", msg=>{
+        const body = msg
+        game = new Game(body.players,actions,{},cards)
+        game.dealCards()
+        console.log(game)
+    })
+ })
 app.get('/',(req,res)=>{
     res.json(cards)
 })
@@ -56,7 +69,6 @@ app.post('/start/',(req,res)=>{
     const body = req.body
     game = new Game(body.players,actions,{},cards)
     game.dealCards()
-    game.startTurn()
     res.json(game)
   })
 
@@ -75,7 +87,7 @@ app.post('/action/:id',(req,res)=>{
 })
   
 const PORT = 3000
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)
 })
 
