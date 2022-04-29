@@ -1,9 +1,11 @@
 
  class Game {
-    constructor(players, actions,reactions,cards) {
+     constructor(players, actions, challenges,reactions,cards) {
         this.players = players
         this.actions = actions
+        this.challenges = challenges
         this.reactions = reactions
+        this.cards = cards
         this.deck = this.buildDeck(cards)
         this.state = Game.GameState.choice
     }
@@ -44,6 +46,11 @@
         else {
             return this.actions[action](player,this,...args)
         }
+    }
+    executeChallenge(player, target, action, ...args){
+        console.log(this)
+        return this.challenges[action](player, target, this, ...args)
+
     }
 
 }

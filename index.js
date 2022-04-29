@@ -8,6 +8,75 @@ const cards = [
     {name:"captain",action:"steal",reaction:"block_steal"},
     {name:"ambassador",action:"exchange",reaction:"block_steal"}
 ]
+
+const reactions = {
+    block_assasin: (player, target, game, ...args) => {
+
+    },
+    block_foreign_aid: (player, target, game, ...args) => {
+
+    },
+    block_steal: (player, target, game, ...args) => {
+
+    }
+}
+
+const challenges = {
+    challenge : (player, target, game, ...args)=>{
+
+    },
+    tax: (player, target, game, ...args) => {
+        if (game.players[target].influences[0].includes("duke")){
+            game.players[target].influences[0].splice(game.players[target].influences[0].indexOf("duke"), 1)
+            game.deck.push("duke")
+            game.shuffle(game.deck)
+            game.players[target].influences[0].push(game.deck.pop())
+            delete game.players[player]
+        }
+        else {
+            delete game.players[target]
+        }
+    },
+    assassinate: (player, target, game, ...args) => {
+        if (game.players[target].influences[0].includes("assassin")) {
+            game.players[target].influences[0].splice(game.players[target].influences[0].indexOf("assassin"), 1)
+            game.deck.push("assassin")
+            game.shuffle(game.deck)
+            game.players[target].influences[0].push(game.deck.pop())
+            delete game.players[player]
+        }
+        else {
+            delete game.players[target]
+        }
+    },
+    steal: (player, target, game, ...args) => {
+        if (game.players[target].influences[0].includes("captain")) {
+            game.players[target].influences[0].splice(game.players[target].influences[0].indexOf("captain"), 1)
+            game.deck.push("captain")
+            game.shuffle(game.deck)
+            game.players[target].influences[0].push(game.deck.pop())
+            delete game.players[player]
+        }
+        else {
+            delete game.players[target]
+        }
+    },
+    exchange: (player, target, game, ...args) => {
+        if (game.players[target].influences[0].includes("ambassador")) {
+            game.players[target].influences[0].splice(game.players[target].influences[0].indexOf("ambassador"), 1)
+            game.deck.push("ambassador")
+            game.shuffle(game.deck)
+            game.players[target].influences[0].push(game.deck.pop())
+            delete game.players[player]
+        }
+        else {
+            delete game.players[target]
+        }
+    }
+
+}
+
+
 const actions = {
     income : (player,game,...args) => {
         game.players[player].coins++
@@ -16,20 +85,31 @@ const actions = {
         game.players[player].coins +=  2
     },
     coup : (player,target,game,...args) => {
-        game.players[player].coins -= 7
-        delete game.players[target]
+        if (game.players[player].coins>=7){
+            game.players[player].coins -= 7
+            delete game.players[target]
+        }
 
     },
     tax : (player,game,...args) => {
         game.players[player].coins +=3
     },
     assassinate: (player,target,game,...args) => {
-        game.players[player].coins -=3
-        delete game.players[target]
+        if(game.players[player].coins>=3){
+            game.players[player].coins -=3
+            delete game.players[target]
+        }
     },
     steal: (player,target,game,...args) => {
-        game.players[player].coins +=2
-        game.players[target].coins -=2
+        if(game.players[target].coins>=2){
+            game.players[player].coins +=2
+            game.players[target].coins -=2
+        }
+        else{
+            game.players[player].coins += game.players[target].coins
+            game.players[target].coins -= game.players[target].coins
+        }
+
     },
     exchange: (player,game,...args) => {
         console.log(args[0].choice)
@@ -47,6 +127,8 @@ const actions = {
         }
     }
 }
+
+
 let game = null
 app.use(express.json())
 app.get('/',(req,res)=>{
@@ -54,7 +136,7 @@ app.get('/',(req,res)=>{
 })
 app.post('/start/',(req,res)=>{
     const body = req.body
-    game = new Game(body.players,actions,{},cards)
+    game = new Game(body.players,actions,challenges,{},cards)
     game.dealCards()
     game.startTurn()
     res.json(game)
@@ -73,9 +155,17 @@ app.post('/action/:id',(req,res)=>{
     response  = response ? response : game  
     res.json(response)
 })
-  
+app.post('/challenge/:id', (req, res) => {
+    const body = req.body
+    const player = req.params.id
+    let response = game
+    response = game.executeChallenge(player, body.target, body.action, body)
+    response = response ? response : game
+    res.json(response)
+})  
 const PORT = 3000
 app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)
 })
+
 
