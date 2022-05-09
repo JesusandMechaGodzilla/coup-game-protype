@@ -9,6 +9,7 @@
         this.deck = this.buildDeck(cards)
         this.state = Game.GameState.choice
     }
+    
     static GameState = {
         start : Symbol('start'),
         choice : Symbol('choice'),
