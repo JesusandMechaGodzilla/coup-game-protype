@@ -14,10 +14,6 @@ const cards = [
     {name:"captain",action:"steal",reaction:"block_steal"},
     {name:"ambassador",action:"exchange",reaction:"block_steal"}
 ]
-<<<<<<< HEAD
-=======
-
->>>>>>> 345e63b0eac508754c429453eeb4687e89a8be5f
 const reactions = {
     block_assasin: (player, target, game, ...args) => {
 
@@ -94,7 +90,6 @@ const actions = {
         game.players.find(playerToFind => player ===playerToFind.name).coins +=  2
     },
     coup : (player,target,game,...args) => {
-<<<<<<< HEAD
         game.players.find(playerToFind => player === playerToFind.name).coins -= 7
         const targetIndex = game.players.findIndex(playerToFind => target === playerToFind.name)
         console.log(game.players[targetIndex].influences.length)
@@ -103,11 +98,6 @@ const actions = {
         }
         else {
             game.players.splice(targetIndex,1)
-=======
-        if (game.players[player].coins>=7){
-            game.players[player].coins -= 7
-            delete game.players[target]
->>>>>>> 345e63b0eac508754c429453eeb4687e89a8be5f
         }
 
     },
@@ -115,7 +105,6 @@ const actions = {
         game.players.find(playerToFind => player ===playerToFind.name).coins +=3
     },
     assassinate: (player,target,game,...args) => {
-<<<<<<< HEAD
         game.players.find(playerToFind => player === playerToFind.name).coins -= 3
         const targetIndex = game.players.findIndex(playerToFind => target === playerToFind.name)
         console.log(game.players[targetIndex].influences.length)
@@ -129,23 +118,6 @@ const actions = {
     steal: (player,target,game,...args) => {
         game.players.find(playerToFind => player ===playerToFind.name).coins +=2
         game.players.find(playerToFind => target ===playerToFind.name).coins -=2
-=======
-        if(game.players[player].coins>=3){
-            game.players[player].coins -=3
-            delete game.players[target]
-        }
-    },
-    steal: (player,target,game,...args) => {
-        if(game.players[target].coins>=2){
-            game.players[player].coins +=2
-            game.players[target].coins -=2
-        }
-        else{
-            game.players[player].coins += game.players[target].coins
-            game.players[target].coins -= game.players[target].coins
-        }
-
->>>>>>> 345e63b0eac508754c429453eeb4687e89a8be5f
     },
     exchange: (player,game,...args) => {
         let cardsToReplace = args[0].choice ? args[0].choice : null 
@@ -163,10 +135,6 @@ const actions = {
     }
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 345e63b0eac508754c429453eeb4687e89a8be5f
 let game = null
 app.use(express.json())
 //  io.on('connection', socket =>{
@@ -211,12 +179,8 @@ app.post('/challenge/:id', (req, res) => {
     response = response ? response : game
     res.json(response)
 })  
-<<<<<<< HEAD
   
 const PORT = 3001
-=======
-const PORT = 3000
->>>>>>> 345e63b0eac508754c429453eeb4687e89a8be5f
 app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)
 })
