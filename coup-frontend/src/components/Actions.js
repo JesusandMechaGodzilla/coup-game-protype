@@ -1,5 +1,5 @@
 import React from 'react'
-import GameService from '../services/game.js'
+import GameService from '../services/GameServices.js'
 export default function Actions({actions,game,playersTurn,setGame,gameState,setGameState,cardChoice,setCardChoice}) {
     const executeAction = (action,target,cards) => () => {
         switch(action.name) {

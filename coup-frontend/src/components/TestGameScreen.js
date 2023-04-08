@@ -1,26 +1,14 @@
 import { useState,useEffect } from "react";
 import Actions from "./Actions";
 import Players from "./Players";
-import GameService from '../services/game.js'
+import GameService from '../services/GameServices.js'
 
-function TestGameScreen() {
+function TestGameScreen({players}) {
   const updateGameNextTurn = () => {
     let nextTurnIndex = game.players.findIndex(player => player.name === playersTurn.name) + 1
     nextTurnIndex = nextTurnIndex >= game.players.length ?  0 : nextTurnIndex 
     setNextPlayersTurn(game.players[nextTurnIndex])
 }
-  const players = [
-    {
-      name:"player1",
-      coins: 2,
-      influences:[]
-    },
-    {
-      name:"player2",
-      coins: 2,
-      influences:[]
-    }
-  ]
   const [game,setGame] = useState({players:players})
   const [gameState,setGameState] = useState({name:"action",action:null})
   const [cardChoice,setCardChoice] = useState([]);
